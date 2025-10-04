@@ -6,6 +6,12 @@ from ..config import settings
 from ..schemas.models import PatientCommunication, ClinicalPlan, PathologyReport
 import uuid
 from datetime import datetime
+from pydantic import BaseModel, Field
+
+
+class PatientMessageExtraction(BaseModel):
+    """Structured extraction schema for patient communications."""
+    message_content: str = Field(description="Patient-friendly message explaining results and next steps")
 
 
 class PatientCommunicatorAgent:
@@ -17,6 +23,8 @@ class PatientCommunicatorAgent:
             model=settings.openai_model,
             temperature=0.3,
         )
+        # Configure structured output
+        self.structured_llm = self.llm.with_structured_output(PatientMessageExtraction)
 
     async def generate_patient_message(
         self,
@@ -64,15 +72,15 @@ class PatientCommunicatorAgent:
             HumanMessage(content=user_prompt),
         ]
 
-        response = await self.llm.ainvoke(messages)
-        message_content = response.content
+        # Use structured output with gpt-4o
+        extracted: PatientMessageExtraction = await self.structured_llm.ainvoke(messages)
 
         return PatientCommunication(
             communication_id=str(uuid.uuid4()),
             patient_id=report.patient_id,
             report_id=report.report_id,
             message_type=message_type,
-            message_content=message_content,
+            message_content=extracted.message_content,
             delivery_status="pending",
         )
 

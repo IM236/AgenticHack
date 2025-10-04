@@ -6,6 +6,14 @@ from ..config import settings
 from ..schemas.models import ClinicalPlan, PathologyReport, DiagnosisType
 from datetime import datetime
 import uuid
+from pydantic import BaseModel, Field
+
+
+class ClinicalPlanExtraction(BaseModel):
+    """Structured extraction schema for clinical plans."""
+    treatment_plan: str = Field(description="Detailed treatment plan and clinical recommendations")
+    follow_up_actions: List[str] = Field(description="List of specific follow-up actions required")
+    urgency_level: str = Field(description="Urgency level: routine, moderate, or urgent")
 
 
 class ClinicalPlannerAgent:
@@ -17,6 +25,8 @@ class ClinicalPlannerAgent:
             model=settings.openai_model,
             temperature=0.2,
         )
+        # Configure structured output
+        self.structured_llm = self.llm.with_structured_output(ClinicalPlanExtraction)
 
     async def create_clinical_plan(
         self, report: PathologyReport, clinician_id: str
@@ -53,12 +63,8 @@ class ClinicalPlannerAgent:
             HumanMessage(content=user_prompt),
         ]
 
-        response = await self.llm.ainvoke(messages)
-        plan_text = response.content
-
-        # Extract follow-up actions based on diagnosis
-        follow_up_actions = self._determine_follow_up_actions(report)
-        urgency = self._assess_urgency(report.diagnosis)
+        # Use structured output with gpt-4o
+        extracted: ClinicalPlanExtraction = await self.structured_llm.ainvoke(messages)
 
         return ClinicalPlan(
             plan_id=str(uuid.uuid4()),
@@ -66,9 +72,9 @@ class ClinicalPlannerAgent:
             patient_id=report.patient_id,
             clinician_id=clinician_id,
             diagnosis=report.diagnosis,
-            treatment_plan=plan_text,
-            follow_up_actions=follow_up_actions,
-            urgency_level=urgency,
+            treatment_plan=extracted.treatment_plan,
+            follow_up_actions=extracted.follow_up_actions,
+            urgency_level=extracted.urgency_level,
         )
 
     def _determine_follow_up_actions(

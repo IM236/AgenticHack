@@ -14,7 +14,7 @@ class Settings(BaseSettings):
 
     # OpenAI Configuration
     openai_api_key: str
-    openai_model: str = "gpt-4-turbo-preview"
+    openai_model: str = "gpt-4o-2024-08-06"  # Latest model with structured outputs support
 
     # Epic Integration
     epic_fhir_base_url: Optional[str] = None
