@@ -1,16 +1,16 @@
-import { PathologyReport } from '@/types/pathology';
+import { DashboardReport } from '@/types/pathology';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { Clock, AlertCircle } from 'lucide-react';
 
 interface ReportListProps {
-  reports: PathologyReport[];
-  selectedReport: PathologyReport | null;
-  onSelectReport: (report: PathologyReport) => void;
+  reports: DashboardReport[];
+  selectedReport: DashboardReport | null;
+  onSelectReport: (report: DashboardReport) => void;
 }
 
-const getStatusBadge = (status: PathologyReport['status']) => {
+const getStatusBadge = (status: DashboardReport['status']) => {
   const statusConfig = {
     new: { label: 'New', className: 'bg-primary text-primary-foreground' },
     analyzing: { label: 'Analyzing', className: 'bg-warning text-warning-foreground' },
@@ -23,7 +23,7 @@ const getStatusBadge = (status: PathologyReport['status']) => {
   return <Badge className={config.className}>{config.label}</Badge>;
 };
 
-const getCategoryColor = (category: PathologyReport['category']) => {
+const getCategoryColor = (category: DashboardReport['category']) => {
   const colors = {
     Normal: 'text-success',
     Abnormal: 'text-warning',
@@ -45,11 +45,11 @@ export const ReportList = ({ reports, selectedReport, onSelectReport }: ReportLi
         <div className="space-y-2">
           {reports.map((report) => (
             <button
-              key={report.id}
+              key={report.report_id}
               onClick={() => onSelectReport(report)}
               className={cn(
                 'w-full text-left p-3 rounded-lg border transition-all',
-                selectedReport?.id === report.id
+                selectedReport?.report_id === report.report_id
                   ? 'bg-accent border-primary shadow-sm'
                   : 'bg-card hover:bg-accent hover:border-border'
               )}
