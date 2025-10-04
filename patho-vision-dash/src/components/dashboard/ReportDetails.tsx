@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { PathologyReport } from '@/types/pathology';
+import { DashboardReport } from '@/types/pathology';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,7 +11,7 @@ import { StatusTracker } from './StatusTracker';
 import { AgentChat } from './AgentChat';
 
 interface ReportDetailsProps {
-  report: PathologyReport;
+  report: DashboardReport;
   onRegeneratePlan: () => void;
   onApprovePlan: () => void;
   onSendMessage: () => void;
@@ -120,7 +120,7 @@ export const ReportDetails = ({ report, onRegeneratePlan, onApprovePlan, onSendM
               </CardHeader>
               <CardContent>
                 <pre className="text-sm font-mono whitespace-pre-wrap text-foreground bg-muted p-4 rounded-md">
-                  {report.rawReport}
+                  {report.raw_text || 'No raw report available'}
                 </pre>
               </CardContent>
             </Card>
@@ -147,9 +147,11 @@ export const ReportDetails = ({ report, onRegeneratePlan, onApprovePlan, onSendM
                 </div>
               </CardHeader>
               <CardContent>
-                {report.clinicalPlan ? (
+                {report.clinicalPlanText || report.clinical_plan?.treatment_plan ? (
                   <div className="prose prose-sm max-w-none">
-                    <pre className="whitespace-pre-wrap font-sans text-sm">{report.clinicalPlan}</pre>
+                    <pre className="whitespace-pre-wrap font-sans text-sm">
+                      {report.clinicalPlanText || report.clinical_plan?.treatment_plan}
+                    </pre>
                   </div>
                 ) : (
                   <p className="text-muted-foreground">Clinical plan is being generated...</p>
@@ -173,9 +175,11 @@ export const ReportDetails = ({ report, onRegeneratePlan, onApprovePlan, onSendM
                 </div>
               </CardHeader>
               <CardContent>
-                {report.patientMessage ? (
+                {report.patientMessageText || report.patient_communication?.message_content ? (
                   <div className="bg-muted p-4 rounded-md">
-                    <pre className="whitespace-pre-wrap font-sans text-sm">{report.patientMessage}</pre>
+                    <pre className="whitespace-pre-wrap font-sans text-sm">
+                      {report.patientMessageText || report.patient_communication?.message_content}
+                    </pre>
                   </div>
                 ) : (
                   <p className="text-muted-foreground">Patient message is being drafted...</p>
@@ -185,7 +189,7 @@ export const ReportDetails = ({ report, onRegeneratePlan, onApprovePlan, onSendM
           </TabsContent>
 
           <TabsContent value="agent">
-            <AgentChat reportId={report.id} />
+            <AgentChat reportId={report.report_id} />
           </TabsContent>
         </Tabs>
       </div>
