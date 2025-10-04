@@ -1,0 +1,118 @@
+[
+  {
+    "id": "report_patient_001_01",
+    "patient_id": "patient_001",
+    "patient_name": "Jessica Jones",
+    "accession_number": "S254404001",
+    "procedure_date": "2024-03-15",
+    "procedure_type": "colonoscopy with biopsy",
+    "indication": "screening colonoscopy",
+    "physician": "Dr. James Smith, MD",
+    "specimen_type": "colon polyp(s)",
+    "clinical_history": "62-year-old female with screening colonoscopy",
+    "cecal_intubation": true,
+    "prep_quality": "poor",
+    "num_polyps": 2,
+    "polyps": [
+      {
+        "number": 1,
+        "type": "sessile serrated adenoma",
+        "location": "transverse colon",
+        "size_mm": 3,
+        "dysplasia": "no dysplasia",
+        "removal_method": "endoscopic mucosal resection (EMR)"
+      },
+      {
+        "number": 2,
+        "type": "tubulovillous adenoma",
+        "location": "cecum",
+        "size_mm": 19,
+        "dysplasia": "low-grade dysplasia",
+        "removal_method": "cold snare polypectomy"
+      }
+    ],
+    "report_date": "2024-03-15",
+    "pathologist": "Dr. Robert Martinez, MD",
+    "surveillance_recommendation": "3 years"
+  },
+  {
+    "id": "report_patient_002_01",
+    "patient_id": "patient_002",
+    "patient_name": "Susan Moore",
+    "accession_number": "S255041001",
+    "procedure_date": "2023-11-28",
+    "procedure_type": "colonoscopy with biopsy",
+    "indication": "surveillance colonoscopy (history of polyps)",
+    "physician": "Dr. Lisa Patel, MD",
+    "specimen_type": "colon polyp(s)",
+    "clinical_history": "49-year-old male with surveillance colonoscopy (history of polyps)",
+    "cecal_intubation": true,
+    "prep_quality": "poor",
+    "num_polyps": 3,
+    "polyps": [
+      {
+        "number": 1,
+        "type": "villous adenoma",
+        "location": "descending colon",
+        "size_mm": 8,
+        "dysplasia": "no dysplasia",
+        "removal_method": "cold forceps biopsy"
+      },
+      {
+        "number": 2,
+        "type": "tubulovillous adenoma",
+        "location": "sigmoid colon",
+        "size_mm": 22,
+        "dysplasia": "high-grade dysplasia",
+        "removal_method": "endoscopic mucosal resection (EMR)"
+      },
+      {
+        "number": 3,
+        "type": "villous adenoma",
+        "location": "descending colon",
+        "size_mm": 24,
+        "dysplasia": "high-grade dysplasia",
+        "removal_method": "cold snare polypectomy"
+      }
+    ],
+    "report_date": "2023-11-28",
+    "pathologist": "Dr. Robert Martinez, MD",
+    "surveillance_recommendation": "3 years"
+  },
+  {
+    "id": "report_patient_003_01",
+    "patient_id": "patient_003",
+    "patient_name": "Mary Lopez",
+    "accession_number": "S258993001",
+    "procedure_date": "2025-06-09",
+    "procedure_type": "colonoscopy with biopsy",
+    "indication": "surveillance colonoscopy (family history)",
+    "physician": "Dr. James Smith, MD",
+    "specimen_type": "colon polyp(s)",
+    "clinical_history": "50-year-old male with surveillance colonoscopy (family history)",
+    "cecal_intubation": true,
+    "prep_quality": "excellent",
+    "num_polyps": 2,
+    "polyps": [
+      {
+        "number": 1,
+        "type": "tubulovillous adenoma",
+        "location": "rectum",
+        "size_mm": 4,
+        "dysplasia": "no dysplasia",
+        "removal_method": "cold snare polypectomy"
+      },
+      {
+        "number": 2,
+        "type": "hyperplastic polyp",
+        "location": "rectum",
+        "size_mm": 7,
+        "dysplasia": "no dysplasia",
+        "removal_method": "cold snare polypectomy"
+      }
+    ],
+    "report_date": "2025-06-09",
+    "pathologist": "Dr. Robert Martinez, MD",
+    "surveillance_recommendation": "3 years"
+  }
+]

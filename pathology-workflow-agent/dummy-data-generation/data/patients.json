@@ -1,0 +1,32 @@
+[
+  {
+    "id": "patient_001",
+    "name": "Jessica Jones",
+    "first_name": "Jessica",
+    "last_name": "Jones",
+    "gender": "female",
+    "birth_date": "1963-03-11",
+    "age": 62,
+    "location": "Denver, CO"
+  },
+  {
+    "id": "patient_002",
+    "name": "Susan Moore",
+    "first_name": "Susan",
+    "last_name": "Moore",
+    "gender": "male",
+    "birth_date": "1976-10-17",
+    "age": 49,
+    "location": "Dallas, TX"
+  },
+  {
+    "id": "patient_003",
+    "name": "Mary Lopez",
+    "first_name": "Mary",
+    "last_name": "Lopez",
+    "gender": "male",
+    "birth_date": "1975-10-14",
+    "age": 50,
+    "location": "Denver, CO"
+  }
+]
