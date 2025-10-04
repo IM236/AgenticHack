@@ -151,3 +151,31 @@ export interface AgentMessage {
   content: string;
   timestamp: string;
 }
+
+// Physician approval workflow
+export type ApprovalStatus = 'pending' | 'approved' | 'rejected' | 'needs_revision';
+
+export interface PhysicianReview {
+  review_id: string;
+  report_id: string;
+  physician_id: string;
+  physician_name: string;
+  approval_status: ApprovalStatus;
+  clinical_plan_approved: boolean;
+  patient_message_approved: boolean;
+  revision_notes?: string;
+  reviewed_at: string;
+}
+
+export interface ApproveRequest {
+  report_id: string;
+  approve_clinical_plan: boolean;
+  approve_patient_message: boolean;
+  revision_notes?: string;
+}
+
+export interface ApproveResponse {
+  success: boolean;
+  review: PhysicianReview;
+  message: string;
+}

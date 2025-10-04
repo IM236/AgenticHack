@@ -9,6 +9,7 @@ import { FileText, User, Calendar, Activity, CheckCircle, Send, RefreshCw } from
 import { format } from 'date-fns';
 import { StatusTracker } from './StatusTracker';
 import { AgentChat } from './AgentChat';
+import { ApprovalActions } from './ApprovalActions';
 
 interface ReportDetailsProps {
   report: DashboardReport;
@@ -126,25 +127,11 @@ export const ReportDetails = ({ report, onRegeneratePlan, onApprovePlan, onSendM
             </Card>
           </TabsContent>
 
-          <TabsContent value="plan">
+          <TabsContent value="plan" className="space-y-4">
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>AI-Generated Clinical Plan</CardTitle>
-                    <CardDescription>Recommended management strategy</CardDescription>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={onRegeneratePlan}>
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Regenerate
-                    </Button>
-                    <Button size="sm" onClick={onApprovePlan}>
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      Approve Plan
-                    </Button>
-                  </div>
-                </div>
+                <CardTitle>AI-Generated Clinical Plan</CardTitle>
+                <CardDescription>Recommended management strategy</CardDescription>
               </CardHeader>
               <CardContent>
                 {report.clinicalPlanText || report.clinical_plan?.treatment_plan ? (
@@ -158,6 +145,12 @@ export const ReportDetails = ({ report, onRegeneratePlan, onApprovePlan, onSendM
                 )}
               </CardContent>
             </Card>
+
+            <ApprovalActions
+              reportId={report.report_id}
+              hasClinicalPlan={!!(report.clinicalPlanText || report.clinical_plan?.treatment_plan)}
+              hasPatientMessage={!!(report.patientMessageText || report.patient_communication?.message_content)}
+            />
           </TabsContent>
 
           <TabsContent value="message">

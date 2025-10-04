@@ -7,6 +7,7 @@ import {
   SubmitReportRequest,
   GetReportStatusResponse,
   DashboardReport,
+  ApproveRequest,
 } from '@/types/pathology';
 
 /**
@@ -126,22 +127,21 @@ export function useSubmitReport() {
 
 /**
  * Hook to get a specific report by ID
+ * No auto-refetch - only manual refresh
  */
 export function useReportStatus(reportId: string | null) {
   return useQuery({
     queryKey: ['report', reportId],
     queryFn: () => pathologyApi.getReportStatus(reportId!),
     enabled: !!reportId,
-    refetchInterval: (data) => {
-      // Auto-refetch every 5 seconds if not completed
-      if (!data?.workflow_state) return false;
-      return data.workflow_state.current_step !== 'completed' ? 5000 : false;
-    },
+    refetchInterval: false, // Disabled auto-refetch
+    refetchOnWindowFocus: false,
   });
 }
 
 /**
  * Hook to get all reports (transforms to DashboardReport format)
+ * No auto-refetch - only manual refresh via button
  */
 export function useReports() {
   return useQuery({
@@ -152,7 +152,8 @@ export function useReports() {
         .map(transformToDashboardReport)
         .filter((r): r is DashboardReport => r !== null);
     },
-    refetchInterval: 10000, // Refetch every 10 seconds
+    refetchInterval: false, // Disabled auto-refetch
+    refetchOnWindowFocus: false, // Don't refetch on window focus
   });
 }
 
@@ -173,5 +174,38 @@ export function useHealthCheck() {
     queryKey: ['health'],
     queryFn: () => pathologyApi.healthCheck(),
     refetchInterval: 30000, // Check every 30 seconds
+  });
+}
+
+/**
+ * Hook to approve clinical plan and patient message
+ */
+export function useApproveReport() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: ApproveRequest) => pathologyApi.approveReport(data),
+    onSuccess: (_, variables) => {
+      // Invalidate reports list and specific report
+      queryClient.invalidateQueries({ queryKey: ['reports'] });
+      queryClient.invalidateQueries({ queryKey: ['report', variables.report_id] });
+    },
+  });
+}
+
+/**
+ * Hook to reject report with revision notes
+ */
+export function useRejectReport() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ reportId, revisionNotes }: { reportId: string; revisionNotes: string }) =>
+      pathologyApi.rejectReport(reportId, revisionNotes),
+    onSuccess: (_, variables) => {
+      // Invalidate reports list and specific report
+      queryClient.invalidateQueries({ queryKey: ['reports'] });
+      queryClient.invalidateQueries({ queryKey: ['report', variables.reportId] });
+    },
   });
 }

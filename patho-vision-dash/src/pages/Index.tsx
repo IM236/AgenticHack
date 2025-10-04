@@ -3,33 +3,26 @@ import { TopBar } from '@/components/dashboard/TopBar';
 import { InboxNav } from '@/components/dashboard/InboxNav';
 import { ReportList } from '@/components/dashboard/ReportList';
 import { ReportDetails } from '@/components/dashboard/ReportDetails';
-import { mockReports } from '@/data/mockReports';
 import { DashboardReport } from '@/types/pathology';
 import { toast } from 'sonner';
 import { useReports } from '@/hooks/usePathologyApi';
+import { RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState('results');
   const [selectedReport, setSelectedReport] = useState<DashboardReport | null>(null);
 
-  // Fetch reports from API with fallback to mock data
-  const { data: apiReports, isLoading, isError } = useReports();
+  // Fetch reports from API
+  const { data: apiReports, isLoading, isError, refetch } = useReports();
 
-  // Use API data if available, otherwise fallback to mock data
-  const reports = apiReports && apiReports.length > 0 ? apiReports : mockReports;
+  const reports = apiReports || [];
 
-  // Show connection status on mount
-  useState(() => {
-    if (isError) {
-      toast.warning('Using offline mode', {
-        description: 'Could not connect to backend API. Showing demo data.',
-      });
-    } else if (apiReports && apiReports.length > 0) {
-      toast.success('Connected to backend', {
-        description: 'Real-time data loading enabled.',
-      });
-    }
-  });
+  const handleRefresh = async () => {
+    toast.info('Refreshing reports...');
+    await refetch();
+    toast.success('Reports refreshed');
+  };
 
   const handleRegeneratePlan = () => {
     toast.info('Regenerating clinical plan...', {
@@ -86,31 +79,44 @@ const Index = () => {
           selectedCategory={selectedCategory}
           onSelectCategory={setSelectedCategory}
         />
-        {isLoading ? (
-          <div className="flex-1 flex items-center justify-center text-muted-foreground">
-            Loading reports...
+        <div className="flex flex-col flex-1">
+          <div className="p-4 border-b flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Reports</h2>
+            <Button onClick={handleRefresh} variant="outline" size="sm" disabled={isLoading}>
+              <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
           </div>
-        ) : (
-          <>
-            <ReportList
-              reports={reports}
-              selectedReport={selectedReport}
-              onSelectReport={setSelectedReport}
-            />
-            {selectedReport ? (
-              <ReportDetails
-                report={selectedReport}
-                onRegeneratePlan={handleRegeneratePlan}
-                onApprovePlan={handleApprovePlan}
-                onSendMessage={handleSendMessage}
+          {isLoading ? (
+            <div className="flex-1 flex items-center justify-center text-muted-foreground">
+              Loading reports...
+            </div>
+          ) : isError ? (
+            <div className="flex-1 flex items-center justify-center text-destructive">
+              Failed to load reports. Click refresh to try again.
+            </div>
+          ) : (
+            <div className="flex-1 flex overflow-hidden">
+              <ReportList
+                reports={reports}
+                selectedReport={selectedReport}
+                onSelectReport={setSelectedReport}
               />
-            ) : (
-              <div className="flex-1 flex items-center justify-center text-muted-foreground">
-                Select a report to view details
-              </div>
-            )}
-          </>
-        )}
+              {selectedReport ? (
+                <ReportDetails
+                  report={selectedReport}
+                  onRegeneratePlan={handleRegeneratePlan}
+                  onApprovePlan={handleApprovePlan}
+                  onSendMessage={handleSendMessage}
+                />
+              ) : (
+                <div className="flex-1 flex items-center justify-center text-muted-foreground">
+                  Select a report to view details
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

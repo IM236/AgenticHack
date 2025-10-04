@@ -104,6 +104,156 @@ async def submit_pathology_report(request: PathologyReportRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/api/v1/reports")
+async def list_reports():
+    """List all pathology reports.
+
+    Returns sample data for testing
+    """
+    # Sample test data matching GetReportStatusResponse format
+    from datetime import datetime
+
+    sample_reports = [
+        {
+            "report_id": "test-001",
+            "workflow_state": {
+                "report_id": "test-001",
+                "patient_id": "patient-001",
+                "pathology_report": {
+                    "report_id": "test-001",
+                    "patient_id": "patient-001",
+                    "pathologist_id": "Dr. Sarah Johnson",
+                    "tissue_sample_id": "Colon Biopsy",
+                    "diagnosis": "precancerous",
+                    "findings": "2 tubular adenomas removed from ascending colon. Sizes 5mm and 8mm. Low-grade dysplasia noted.",
+                    "recommendations": "Follow-up colonoscopy in 3 years. Continue fiber-rich diet.",
+                    "created_at": datetime.now().isoformat(),
+                    "raw_text": """PATHOLOGY REPORT
+
+PATIENT: John Smith
+MRN: 123456
+SPECIMEN: Colon Biopsy - Ascending Colon
+
+CLINICAL HISTORY: Screening colonoscopy, family history of colon cancer
+
+GROSS DESCRIPTION:
+Received are two polypoid fragments of tan-pink tissue measuring 5mm and 8mm in greatest dimension.
+
+MICROSCOPIC DESCRIPTION:
+Sections show colonic mucosa with tubular adenomas. The adenomas demonstrate low-grade dysplasia with preserved architecture. No high-grade dysplasia or invasive carcinoma is identified.
+
+DIAGNOSIS:
+1. Ascending colon polyp #1 (5mm): Tubular adenoma with low-grade dysplasia
+2. Ascending colon polyp #2 (8mm): Tubular adenoma with low-grade dysplasia
+
+RECOMMENDATIONS:
+- Follow-up colonoscopy in 3 years
+- Continue fiber-rich diet and healthy lifestyle
+
+Pathologist: Dr. Sarah Johnson, MD
+Date: """ + datetime.now().strftime("%Y-%m-%d"),
+                },
+                "epic_status": {
+                    "report_id": "test-001",
+                    "status": "uploaded",
+                    "uploaded_at": datetime.now().isoformat()
+                },
+                "notification_sent": True,
+                "clinical_plan": {
+                    "plan_id": "plan-001",
+                    "report_id": "test-001",
+                    "patient_id": "patient-001",
+                    "clinician_id": "Dr. Michael Chen",
+                    "diagnosis": "precancerous",
+                    "treatment_plan": "Schedule surveillance colonoscopy in 3 years. Monitor for any new symptoms.",
+                    "follow_up_actions": [
+                        "Book 3-year surveillance colonoscopy",
+                        "Patient education on adenoma prevention",
+                        "Annual wellness check"
+                    ],
+                    "urgency_level": "routine",
+                    "created_at": datetime.now().isoformat()
+                },
+                "patient_communication": {
+                    "communication_id": "comm-001",
+                    "patient_id": "patient-001",
+                    "report_id": "test-001",
+                    "message_type": "portal",
+                    "message_content": "Your colonoscopy results show 2 small polyps that were removed. These were precancerous but not cancer. We recommend a follow-up colonoscopy in 3 years.",
+                    "delivery_status": "sent",
+                    "sent_at": datetime.now().isoformat()
+                },
+                "patient_notified": True,
+                "follow_up_scheduled": True,
+                "error": None,
+                "current_step": "completed"
+            }
+        },
+        {
+            "report_id": "test-002",
+            "workflow_state": {
+                "report_id": "test-002",
+                "patient_id": "patient-002",
+                "pathology_report": {
+                    "report_id": "test-002",
+                    "patient_id": "patient-002",
+                    "pathologist_id": "Dr. Emily Rodriguez",
+                    "tissue_sample_id": "Colon Biopsy",
+                    "diagnosis": "benign",
+                    "findings": "Normal colonic mucosa. No polyps or abnormalities detected.",
+                    "recommendations": "Continue routine screening in 10 years",
+                    "created_at": datetime.now().isoformat(),
+                    "raw_text": """PATHOLOGY REPORT
+
+PATIENT: Jane Doe
+MRN: 789012
+SPECIMEN: Colon Biopsy - Random
+
+CLINICAL HISTORY: Routine screening colonoscopy
+
+GROSS DESCRIPTION:
+Received are multiple fragments of tan-pink tissue measuring up to 3mm in aggregate.
+
+MICROSCOPIC DESCRIPTION:
+Sections show normal colonic mucosa with preserved architecture. No polyps, dysplasia, or inflammatory changes identified. Crypts are regular with appropriate maturation.
+
+DIAGNOSIS:
+Normal colonic mucosa - No abnormalities detected
+
+RECOMMENDATIONS:
+- Continue routine screening per guidelines (10 years)
+- Maintain healthy diet and lifestyle
+
+Pathologist: Dr. Emily Rodriguez, MD
+Date: """ + datetime.now().strftime("%Y-%m-%d"),
+                },
+                "epic_status": None,
+                "notification_sent": False,
+                "clinical_plan": {
+                    "plan_id": "plan-002",
+                    "report_id": "test-002",
+                    "patient_id": "patient-002",
+                    "clinician_id": "Dr. Michael Chen",
+                    "diagnosis": "benign",
+                    "treatment_plan": "No treatment needed. Resume normal activities.",
+                    "follow_up_actions": [
+                        "Routine colonoscopy in 10 years",
+                        "Continue healthy lifestyle"
+                    ],
+                    "urgency_level": "routine",
+                    "created_at": datetime.now().isoformat()
+                },
+                "patient_notified": False,
+                "follow_up_scheduled": False,
+                "error": None,
+                "current_step": "creating_clinical_plan"
+            }
+        }
+    ]
+
+    return sample_reports
+
+
 @app.get("/api/v1/reports/{report_id}")
 async def get_report_status(report_id: str):
     """Get status of a pathology report workflow.

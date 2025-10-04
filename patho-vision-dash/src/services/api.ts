@@ -7,6 +7,8 @@ import {
   SubmitReportResponse,
   GetReportStatusResponse,
   WorkflowState,
+  ApproveRequest,
+  ApproveResponse,
 } from '@/types/pathology';
 
 class ApiError extends Error {
@@ -91,6 +93,26 @@ class PathologyApi {
    */
   async listReports(): Promise<GetReportStatusResponse[]> {
     return this.request<GetReportStatusResponse[]>('/api/v1/reports');
+  }
+
+  /**
+   * Approve or reject clinical plan and patient message
+   */
+  async approveReport(data: ApproveRequest): Promise<ApproveResponse> {
+    return this.request<ApproveResponse>(`/api/v1/reports/${data.report_id}/approve`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  /**
+   * Reject report with revision notes
+   */
+  async rejectReport(reportId: string, revisionNotes: string): Promise<ApproveResponse> {
+    return this.request<ApproveResponse>(`/api/v1/reports/${reportId}/reject`, {
+      method: 'POST',
+      body: JSON.stringify({ revision_notes: revisionNotes }),
+    });
   }
 }
 
