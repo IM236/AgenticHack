@@ -452,6 +452,7 @@ dependencies = [
     { name = "langchain-openai" },
     { name = "langgraph" },
     { name = "openai" },
+    { name = "phenoml" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "python-multipart" },
@@ -465,10 +466,26 @@ requires-dist = [
     { name = "langchain-openai", specifier = ">=0.3.34" },
     { name = "langgraph", specifier = ">=0.6.8" },
     { name = "openai", specifier = ">=2.1.0" },
+    { name = "phenoml", specifier = ">=0.0.5" },
     { name = "pydantic", specifier = ">=2.11.10" },
     { name = "pydantic-settings", specifier = ">=2.11.0" },
     { name = "python-multipart", specifier = ">=0.0.20" },
     { name = "uvicorn", specifier = ">=0.37.0" },
+]
+
+[[package]]
+name = "phenoml"
+version = "0.0.5"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpx" },
+    { name = "pydantic" },
+    { name = "pydantic-core" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/17/af/5a38916fd91a48c0a8130cc8648966c932f4a55435389000dd9971996286/phenoml-0.0.5.tar.gz", hash = "sha256:f18a483279ae84328548d36096e21fe576ddcc700c42e13fda9de0c70719e0ff", size = 66898, upload-time = "2025-09-23T22:05:02.898Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c1/0d/74a764924cc4878672a2f29a344654514a3a6e1575f61b70d58126b838c4/phenoml-0.0.5-py3-none-any.whl", hash = "sha256:dc0d6c3a8d753364dd05c6f5b80848103313846d0643ca60ff96f1db91716846", size = 144960, upload-time = "2025-09-23T22:05:01.593Z" },
 ]
 
 [[package]]
