@@ -1,4 +1,4 @@
-# Pathology Workflow Agent
+# Physican Assistant
 
 An automated pathology workflow system powered by AI agents that processes pathology reports, integrates with Epic EHR, and manages clinical follow-up workflows using LangGraph and OpenAI.
 
