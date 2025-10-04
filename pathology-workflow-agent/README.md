@@ -67,7 +67,6 @@ pathology-workflow-agent/
 - **Purpose**: Extract structured data from unstructured pathology text
 - **Capabilities**:
   - Diagnosis extraction
-  - Tissue type identification
   - Medical code mapping (ICD, SNOMED)
   - Entity recognition
   - Data validation and enrichment
