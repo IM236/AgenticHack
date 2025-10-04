@@ -1,9 +1,9 @@
 """Agent for creating clinical plans based on pathology reports."""
 from typing import List
-from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 from ..config import settings
 from ..schemas.models import ClinicalPlan, PathologyReport, DiagnosisType
+from ..utils.gpt5_client import GPT5Client
 from datetime import datetime
 import uuid
 from pydantic import BaseModel, Field
@@ -11,16 +11,16 @@ from pydantic import BaseModel, Field
 
 class ClinicalPlanExtraction(BaseModel):
     """Structured extraction schema for clinical plans."""
-    treatment_plan: str = Field(description="Detailed treatment plan and clinical recommendations")
-    follow_up_actions: List[str] = Field(description="List of specific follow-up actions required")
-    urgency_level: str = Field(description="Urgency level: routine, moderate, or urgent")
+    treatment_plan: str = Field(description="Brief treatment plan (1-2 sentences)")
+    follow_up_actions: List[str] = Field(description="2-3 follow-up actions")
+    urgency_level: str = Field(description="routine, moderate, or urgent")
 
 
 class ClinicalPlannerAgent:
     """Agent for generating clinical plans and follow-up actions."""
 
     def __init__(self):
-        self.llm = ChatOpenAI(
+        self.llm = GPT5Client(
             api_key=settings.openai_api_key,
             model=settings.openai_model,
             temperature=0.2,
@@ -40,30 +40,19 @@ class ClinicalPlannerAgent:
         Returns:
             ClinicalPlan with treatment recommendations and follow-up actions
         """
-        system_prompt = """You are a clinical decision support AI assistant.
-        Based on pathology reports, suggest appropriate clinical plans including:
-        - Treatment recommendations
-        - Follow-up procedures (e.g., colonoscopy, biopsy, imaging)
-        - Timeline for follow-up
-        - Urgency level assessment
+        system_prompt = """Clinical AI. Be extremely brief."""
 
-        Follow evidence-based medical guidelines and standard of care."""
+        user_prompt = f"""{report.patient_name}: {report.diagnosis.value}, {report.num_polyps} polyp(s).
+Surveillance: {report.surveillance_recommendation}
 
-        user_prompt = f"""
-        Pathology Report Analysis:
-        - Diagnosis: {report.diagnosis.value}
-        - Findings: {report.findings}
-        - Recommendations: {report.recommendations or 'None'}
-
-        Generate a clinical plan with specific follow-up actions.
-        """
+Give: 1-sentence treatment, 2 actions, urgency (routine/moderate/urgent)."""
 
         messages = [
             SystemMessage(content=system_prompt),
             HumanMessage(content=user_prompt),
         ]
 
-        # Use structured output with gpt-4o
+        # Use structured output with gpt-5
         extracted: ClinicalPlanExtraction = await self.structured_llm.ainvoke(messages)
 
         return ClinicalPlan(

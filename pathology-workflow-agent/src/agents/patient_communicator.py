@@ -1,9 +1,9 @@
 """Agent for communicating with patients about pathology results."""
 from typing import Dict, Any
-from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 from ..config import settings
 from ..schemas.models import PatientCommunication, ClinicalPlan, PathologyReport
+from ..utils.gpt5_client import GPT5Client
 import uuid
 from datetime import datetime
 from pydantic import BaseModel, Field
@@ -18,7 +18,7 @@ class PatientCommunicatorAgent:
     """Agent for generating patient-friendly communications."""
 
     def __init__(self):
-        self.llm = ChatOpenAI(
+        self.llm = GPT5Client(
             api_key=settings.openai_api_key,
             model=settings.openai_model,
             temperature=0.3,
@@ -42,37 +42,22 @@ class PatientCommunicatorAgent:
         Returns:
             PatientCommunication with message content
         """
-        system_prompt = """You are a compassionate medical communication AI assistant.
-        Generate clear, empathetic, and non-alarming messages for patients about their pathology results.
+        system_prompt = """You are a medical communicator. Be brief, clear, and empathetic. Use plain language."""
 
-        Guidelines:
-        - Use plain language, avoid medical jargon
-        - Be empathetic and supportive
-        - Clearly explain next steps
-        - Encourage patients to contact their care team with questions
-        - Balance transparency with appropriate reassurance
-        - Never provide definitive medical advice - always defer to the clinician"""
+        user_prompt = f"""Write brief patient message for {report.patient_name}'s colonoscopy:
+- {report.num_polyps} polyp(s) found
+- Diagnosis: {report.diagnosis.value}
+- Next colonoscopy: {report.surveillance_recommendation}
+- Urgency: {clinical_plan.urgency_level}
 
-        user_prompt = f"""
-        Generate a patient communication for:
-
-        Diagnosis: {report.diagnosis.value}
-        Key Findings: {report.findings[:200]}...
-
-        Next Steps:
-        {chr(10).join(f"- {action}" for action in clinical_plan.follow_up_actions[:3])}
-
-        Urgency: {clinical_plan.urgency_level}
-
-        Create a {message_type} message that informs the patient while maintaining appropriate tone.
-        """
+Keep message under 150 words. Explain results simply and reassure patient."""
 
         messages = [
             SystemMessage(content=system_prompt),
             HumanMessage(content=user_prompt),
         ]
 
-        # Use structured output with gpt-4o
+        # Use structured output with gpt-5
         extracted: PatientMessageExtraction = await self.structured_llm.ainvoke(messages)
 
         return PatientCommunication(

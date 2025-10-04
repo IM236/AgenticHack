@@ -14,7 +14,7 @@ class Settings(BaseSettings):
 
     # OpenAI Configuration
     openai_api_key: str
-    openai_model: str = "gpt-4o-2024-08-06"  # Latest model with structured outputs support
+    openai_model: str = "gpt-5"  # GPT-5 for all agentic workflows
 
     # Epic Integration
     epic_fhir_base_url: Optional[str] = None
@@ -24,6 +24,10 @@ class Settings(BaseSettings):
     # PhenoML Configuration
     phenoml_api_url: Optional[str] = None
     phenoml_model_path: Optional[str] = None
+    phenoml_username: Optional[str] = None
+    phenoml_password: Optional[str] = None
+    phenoml_base_url: Optional[str] = None
+    provider: Optional[str] = None
 
     # Notification Settings
     smtp_host: Optional[str] = None
@@ -37,6 +41,7 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
+        extra = "ignore"  # Ignore extra fields in .env
 
 
 settings = Settings()

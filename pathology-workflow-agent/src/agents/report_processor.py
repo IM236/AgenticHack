@@ -1,9 +1,9 @@
 """Agent for processing pathology reports."""
 from typing import Dict, Any
-from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 from ..config import settings
 from ..schemas.models import PathologyReport, DiagnosisType
+from ..utils.gpt5_client import GPT5Client
 from pydantic import BaseModel, Field
 
 
@@ -18,7 +18,7 @@ class ReportProcessorAgent:
     """Agent for processing and analyzing pathology reports."""
 
     def __init__(self):
-        self.llm = ChatOpenAI(
+        self.llm = GPT5Client(
             api_key=settings.openai_api_key,
             model=settings.openai_model,
             temperature=0.1,
@@ -48,7 +48,7 @@ class ReportProcessorAgent:
             HumanMessage(content=f"Analyze this pathology report:\n\n{raw_text}"),
         ]
 
-        # Use structured output with gpt-4o
+        # Use structured output with gpt-5
         extracted: PathologyReportExtraction = await self.structured_llm.ainvoke(messages)
 
         return PathologyReport(
